@@ -1,21 +1,19 @@
 (use 'criterium.core)
-(ns pseudoaleatory.blumblumshub)
+(ns pseudoaleatory.lcg)
 
-(def primes {:p 11
-             :q 19})
-
-(defn get-m
-  "Calculo do produto dos primos."
-  []
-  (* (get primes :p) (get primes :q)))
+(def m (dec (Math/pow 2 31)))
+(def a 48271)
+(def c 0)
+(def initial 1)
 
 (defn calc-rand
-  "Formula do blum blum shub para calcular o valor
-  aleatório a partir da seed."
-  [seed]
-  (mod (Math/pow seed 2) (get-m)))
-
-(def rand-seed (atom 3))
+  "Formula do lcg para calcular o valor aleatório."
+  ([]
+   (calc-rand rand-seed))
+  ([n]
+   (if (= n 0)
+     initial
+     (mod (+ (* a (calc-rand (dec n))) c) m))))
 
 (defn next-bit
   "Retorna o valor em bit referente ao aleatório,
@@ -31,7 +29,7 @@
   ([bits]
    (bits-out bits 0 0))
   ([bits checked value]
-   (let [sorted (int (swap! rand-seed calc-rand))]
+   (let [sorted (int (calc-rand checked))]
      (if (= bits checked)
        value
        (recur bits (inc checked) (next-bit value sorted))))))
@@ -39,6 +37,6 @@
 (defn next-rand
   "Calcula o próximo valor aleatório."
   ([]
-   (next-rand 256))
+   (next-rand 30))
   ([bits]
    (bits-out bits)))
