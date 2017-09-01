@@ -5,7 +5,7 @@
 (def k 24)
 (def M 32)
 
-(defn first-lag-values
+(defn initial-lfg-values
   ([]
    (first-lag-values []))
   ([created]
@@ -13,7 +13,7 @@
      created
      (recur (conj created (rand l))))))
 
-(def fst-values (first-lag-values))
+(def fst-values (initial-lfg-values))
 
 (defn lagged-fib-gen
   [n]
